@@ -1,0 +1,4 @@
+addent -password -p username@ADS.IU.EDU -k 1 -e aes256-cts
+@@PASSWORD@@
+wkt username.keytab
+quit
