@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AWSProjectType>Lambda</AWSProjectType>
+    <LangVersion>LATEST</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Native binaries for Lambda/Linux -->
+    <Content Include="lib/*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="local/*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" Version="1.1.0" />
+    <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.5.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.104.31" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zyborg.AWS.Lambda.Kerberos\Zyborg.AWS.Lambda.Kerberos.csproj" />
+  </ItemGroup>
+
+</Project>

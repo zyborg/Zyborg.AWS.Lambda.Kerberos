@@ -1,0 +1,37 @@
+﻿{
+  "Information" : [
+    "This file provides default values for the deployment wizard inside Visual Studio and the AWS Lambda commands added to the .NET Core CLI.",
+    "To learn more about the Lambda commands with the .NET Core CLI execute the following command at the command line in the project root directory.",
+
+    "dotnet lambda help",
+
+    "All the command line options for the Lambda command can be specified in this file."
+  ],
+
+  // Populate these with values for a saved, named profile and AWS region
+  "profile": "AWS-CREDENTIAL-PROFILE",
+  "region" : "AWS-REGION",
+
+  // Give your function a unique name
+  "function-name" : "Kerberos_Sample3",
+  // Be sure to specify a Lambda Service Role with permissions to create ENI interfaces
+  // (within a VPC), write to CW Logs and access S3 where the Keytab file is found
+  "function-role" : "ROLE_WITH_LAMBDA_AND_S3_PERMS",
+  // You need to specify one or more subnets in a VPC to host the Lambda -- these must
+  // be *private* subnets with NAT access to the outside world so that the AWS APIs
+  // can be reached unless you implement service endpoints for private access
+  "function-subnets" : "VPC_PRIVATE_SUBNETS",
+  // You need to specify one or more security groups to allow your Lambda outbound
+  // access to the target MSSQL host (e.g. 1433) and access to the AWS APIs
+  "function-security-groups" : "VPC_SECURITY_GROUPS",
+
+  // Specify environment variables to configure Kerberos and SQL connection
+  "environment-variables": "KerberosRealm=example.com;KerberosRealmKdc=dc1.example.com;KerberosPrincipal=service_user@EXAMPLE.COM;KerberosKeytabS3Path=s3-bucket-name/s3-key-path/to/lambda.keytab;NsServer=dc1.example.com",
+
+  "configuration" : "Release",
+  "framework" : "netcoreapp2.1",
+  "function-runtime":"dotnetcore2.1",
+  "function-memory-size" : 256,
+  "function-timeout" : 30,
+  "function-handler" : "Sample2::Sample2.Function::FunctionHandler"
+}
