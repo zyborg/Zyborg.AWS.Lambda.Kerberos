@@ -1,0 +1,60 @@
+
+## Based on:
+##    https://docs.aws.amazon.com/en_pv/lambda/latest/dg/lambda-runtimes.html
+
+## On amzn-ami-hvm-2018.03.0.20190826-x86_64-gp2 (ami-00eb20669e0990cb4)
+
+$> ldd /usr/bin/nsupdate | sort
+
+## Get all the library dependencies from the tool:
+
+        /lib64/ld-linux-x86-64.so.2 (0x00007f20ac57a000)
+        libattr.so.1          =>    /lib64/libattr.so.1 (0x00007f20a955e000)
+        libbind9.so.80        =>    /usr/lib64/libbind9.so.80 (0x00007f20abdc7000)
+        libcap.so.2           =>    /lib64/libcap.so.2 (0x00007f20aa58c000)
+        libcom_err.so.2       =>    /usr/lib64/libcom_err.so.2 (0x00007f20ab252000)
+        libcrypto.so.10       =>    /lib64/libcrypto.so.10 (0x00007f20aadf3000)
+        libc.so.6             =>    /lib64/libc.so.6 (0x00007f20a9fa3000)
+        libdl.so.2            =>    /lib64/libdl.so.2 (0x00007f20aa790000)
+        libdns.so.81          =>    /usr/lib64/libdns.so.81 (0x00007f20abfd3000)
+        libgssapi_krb5.so.2   =>    /usr/lib64/libgssapi_krb5.so.2 (0x00007f20ab959000)
+        libisccc.so.80        =>    /usr/lib64/libisccc.so.80 (0x00007f20aabeb000)
+        libisccfg.so.82       =>    /usr/lib64/libisccfg.so.82 (0x00007f20abba6000)
+        libisc.so.83          =>    /usr/lib64/libisc.so.83 (0x00007f20aa994000)
+        libk5crypto.so.3      =>    /usr/lib64/libk5crypto.so.3 (0x00007f20ab455000)
+        libkeyutils.so.1      =>    /lib64/libkeyutils.so.1 (0x00007f20a9b91000)
+        libkrb5.so.3          =>    /usr/lib64/libkrb5.so.3 (0x00007f20ab670000)
+        libkrb5support.so.0   =>    /usr/lib64/libkrb5support.so.0 (0x00007f20a9d94000)
+        liblwres.so.80        =>    /usr/lib64/liblwres.so.80 (0x00007f20ac368000)
+        libpthread.so.0       =>    /lib64/libpthread.so.0 (0x00007f20aa370000)
+        libresolv.so.2        =>    /lib64/libresolv.so.2 (0x00007f20a9978000)
+        libselinux.so.1       =>    /usr/lib64/libselinux.so.1 (0x00007f20a933d000)
+        libz.so.1             =>    /lib64/libz.so.1 (0x00007f20a9762000)
+        linux-vdso.so.1       =>    (0x00007fff89fa4000)
+
+
+## Identify all the libraries which are likely not included
+## (or not accessible) in the Lambda execution context, this
+## is part intuition as well as a bit of trial and error:
+
+        libattr.so.1          =>    /lib64/libattr.so.1 (0x00007f20a955e000)
+        libbind9.so.80        =>    /usr/lib64/libbind9.so.80 (0x00007f20abdc7000)
+        libcap.so.2           =>    /lib64/libcap.so.2 (0x00007f20aa58c000)
+        libdns.so.81          =>    /usr/lib64/libdns.so.81 (0x00007f20abfd3000)
+        libisccc.so.80        =>    /usr/lib64/libisccc.so.80 (0x00007f20aabeb000)
+        libisccfg.so.82       =>    /usr/lib64/libisccfg.so.82 (0x00007f20abba6000)
+        libisc.so.83          =>    /usr/lib64/libisc.so.83 (0x00007f20aa994000)
+        liblwres.so.80        =>    /usr/lib64/liblwres.so.80 (0x00007f20ac368000)
+
+
+## Copy this off of the local instance to a place where it can be
+## accessed and included into your Lambda packaging and deployment:
+
+        aws s3 cp /lib64/libattr.so.1           s3://YOUR-BUCKET-HERE/lambda-content/lib/libattr.so.1
+        aws s3 cp /usr/lib64/libbind9.so.80     s3://YOUR-BUCKET-HERE/lambda-content/lib/libbind9.so.80
+        aws s3 cp /lib64/libcap.so.2            s3://YOUR-BUCKET-HERE/lambda-content/lib/libcap.so.2
+        aws s3 cp /usr/lib64/libdns.so.81       s3://YOUR-BUCKET-HERE/lambda-content/lib/libdns.so.81
+        aws s3 cp /usr/lib64/libisccc.so.80     s3://YOUR-BUCKET-HERE/lambda-content/lib/libisccc.so.80
+        aws s3 cp /usr/lib64/libisccfg.so.82    s3://YOUR-BUCKET-HERE/lambda-content/lib/libisccfg.so.82
+        aws s3 cp /usr/lib64/libisc.so.83       s3://YOUR-BUCKET-HERE/lambda-content/lib/libisc.so.83
+        aws s3 cp /usr/lib64/liblwres.so.80     s3://YOUR-BUCKET-HERE/lambda-content/lib/liblwres.so.80
