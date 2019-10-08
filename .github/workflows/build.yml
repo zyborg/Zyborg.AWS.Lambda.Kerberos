@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  build:
+
+    #runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
+    
+    steps:
+    - name: checkout latest
+      uses: actions/checkout@v1
+    
+    - name: extract version base
+      id: extract_version_base
+      shell: pwsh
+      run: |
+        $vdumpJson = dotnet msbuild ./Versions.props /t:DumpVersions
+        $vdump = $vdumpJson | ConvertFrom-Json
+        Write-Output "Got Version Dump:"
+        Write-Output $vdump
+
+        ## Export as output and  ENV VARS for subsequent steps
+        $versionBase = "$($vdump.Major).$($vdump.Minor).$($vdump.Patch)"
+        Write-Host "Found matching Tag Version info:"
+        Write-Host "::set-output name=version_base::$versionBase"
+        Write-Host "::set-env name=VERSION_BASE::$versionBase"
+
+    - name: compute build nums
+      uses: zyborg/gh-action-buildnum@v1
+      with:
+        gist_token: ${{ secrets.GIST_TOKEN }}
+        version_key: ${{ steps.extract_version_base.outputs.version_base }}

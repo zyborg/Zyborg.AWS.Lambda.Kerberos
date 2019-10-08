@@ -178,13 +178,13 @@ This repository contains samples that demonstrate three useful and
 common scenarios that take advantage of this package, as described
 here.
 
-### [Sample2](src/Sample1) - Interacting with Microsoft SQL Server w/ Integrated Authentication
+### [Sample1](src/Sample1) - Interacting with Microsoft SQL Server w/ Integrated Authentication
 
 One of the most predominant use cases, and the one initially inspiring this solution,
 is having Lambda functions interact with a SQL Server (MSSQL) database using
 _integrated authentication_.  Specifically for MSSQL, the latest
 [SQL Client](https://github.com/dotnet/SqlClient) supports integrated authentication
-on the Linux platform with support from native Kerberos tooling and libraries.
+on the Linux platform using native Kerberos tooling and libraries.
 
 This library, together with the latest SQL Client, allows your Lambda function to talk
 to SQL Server using integrated authentication which can be a requirement in some
@@ -219,7 +219,7 @@ Kerberos authentication for quite a while.
 
 In this example, we show how to interact with AD domain controllers which host
 the AD DNS system using nsupdate and its supporting libraries to manage DNS
-records.  This is a very simple example, but you can extrapolate this to see how
-one might be able to build a system that periodically refreshes records based
-on the state of an AD network, or scavenges records that might represent outdated
+records.  This is a very simple example, but you can see how one could extend
+it to be able to build a system that periodically refreshes records based on
+the state of an AD network, or scavenges records that might represent outdated
 or non-responding resources.
