@@ -18,7 +18,7 @@ jobs:
       shell: pwsh
       run: |
         ## Need to run this once to get the dotnet init message out of the way
-        dotnet --help
+        dotnet msbuild ./Versions.props /t:DumpVersions /nologo
 
         $vdumpJson = dotnet msbuild ./Versions.props /t:DumpVersions /nologo
         Write-Output "Got Version Dump JSON:"
