@@ -17,7 +17,7 @@ jobs:
       id: extract_version_base
       shell: pwsh
       run: |
-        $vdumpJson = dotnet msbuild ./Versions.props /t:DumpVersions
+        $vdumpJson = dotnet msbuild ./Versions.props /t:DumpVersions /nologo
         $vdump = $vdumpJson | ConvertFrom-Json
         Write-Output "Got Version Dump:"
         Write-Output $vdump
