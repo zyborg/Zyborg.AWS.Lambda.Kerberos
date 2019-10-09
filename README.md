@@ -1,7 +1,14 @@
 
 # Zyborg.AWS.Lambda.Kerberos
 
-Helps implement Kerberos-aware/authenticated AWS Lambda functions.
+Implement Kerberos-aware/authenticated AWS Lambda functions in .NET Core.
+
+---
+
+[![GitHub WorkFlow - CI](https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos/workflows/CI/badge.svg)](https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos/actions?CI)
+[![GitHub Release Notes (latest by date)](https://img.shields.io/github/v/release/zyborg/Zyborg.AWS.Lambda.Kerberos)](https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos/releases/latest)
+[![Nuget  Release](https://img.shields.io/nuget/v/Zyborg.AWS.Lambda.Kerberos)](https://www.nuget.org/packages/Zyborg.AWS.Lambda.Kerberos/)
+[![GitHub Preview](https://img.shields.io/badge/github%20nuget-latest%20preview-orange)](https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos/packages)
 
 ---
 
