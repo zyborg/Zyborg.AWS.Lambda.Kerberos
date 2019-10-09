@@ -5,4 +5,6 @@
     <RepositoryUrl>https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos</RepositoryUrl>
   </PropertyGroup>
 
+  <Import Project="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'Versions.props'))" />
+
 </Project>
