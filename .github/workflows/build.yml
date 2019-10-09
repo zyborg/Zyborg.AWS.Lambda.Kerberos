@@ -60,7 +60,7 @@ jobs:
           path: src/Zyborg.AWS.Lambda.Kerberos/bin/Release
     
 
-  push-preview-nuget:
+  push-nuget-preview:
     needs: build
     if: (github.event_name == 'create')
     runs-on: ubuntu-16.04
@@ -80,7 +80,6 @@ jobs:
         ##  https://help.github.com/en/articles/configuring-nuget-for-use-with-github-package-registry
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        #run:  nuget sources Add -Name "GPR" \
         run: |
           mono $NUGET_EXE sources Add -Name "GPR" \
             -Source "https://nuget.pkg.github.com/ebekker/index.json" \
@@ -90,9 +89,8 @@ jobs:
 
       - name: publish
         run:  mono $NUGET_EXE push package/Zyborg.AWS.Lambda.Kerberos*.nupkg -Source GPR 
-        #run:  dotnet nuget push Bkkr.GitHub.TestActionsAndRegistry.nupkg --source GPR 
 
-  push-release-nuget:
+  push-nuget-release:
     needs: build
     if: (github.event_name == 'release')
     runs-on: ubuntu-16.04
@@ -107,7 +105,7 @@ jobs:
         #uses: warrenbuckley/Setup-Nuget@v1
         uses: olegtarasov/download-nuget@v1
 
-      - name: would do
-        shell: pwsh
-        run: |
-          Write-Host "This is where we push to NUGET.ORG"
+      - name: publish
+        env:
+          NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+        run: mono $NUGET_EXE push package/Zyborg.AWS.Lambda.Kerberos*.nupkg -ApiKey $NUGET_TOKEN
