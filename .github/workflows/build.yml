@@ -108,4 +108,4 @@ jobs:
       - name: publish
         env:
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
-        run: mono $NUGET_EXE push package/Zyborg.AWS.Lambda.Kerberos*.nupkg -ApiKey $NUGET_TOKEN
+        run: mono $NUGET_EXE push package/Zyborg.AWS.Lambda.Kerberos*.nupkg -Source nuget.org -ApiKey $NUGET_TOKEN
