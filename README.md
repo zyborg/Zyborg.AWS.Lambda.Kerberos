@@ -63,8 +63,8 @@ ticket (TGT).  This initialization step is typically performed at the start of t
 lifecycle, such as in the Lambda function class constructor or the main entry point of
 the Lambda program in a _custom runtime function_.
 
-In this simple example, the keytab file is assumed to packaged up and deployed
-with the Lambda function compiled code, and so it simply reads it in as a file.
+In this simple example, the keytab file is assumed to be packaged up and deployed
+with the Lambda function compiled code, and so it simply reads it in as a local file.
 This is a bit of a contrived example, and better and more secure approaches
 are described later and demonstrated in the provided samples:
 
@@ -90,9 +90,9 @@ km.Refresh();
 
 ## Configuring the `KerberosOptions`
 
-Initializing the Kerberos Manager requires an of the `KerberosOptions` class which
-defines the configuration details of the Kerberos environment.  Here are the options
-that can be configured.
+Initializing the Kerberos Manager requires an instance of the `KerberosOptions` class
+which defines the configuration details of the Kerberos environment.  Here are the
+options that can be configured.
 
 ### `Realm`
 
@@ -133,24 +133,38 @@ component typically in all caps.  For example:
 some-user@EXAMPLE.COM
 ```
 
-
-
-
-
-
-
 ## Keytab
 
-The _key table file_, or keytab for short, is a encrypted form of the Kerberos credentials
-for one or more domain user credentials.  The KerberosManager uses a keytab in order to
+The _key table file_, or keytab for short, is an encrypted form of the Kerberos credentials
+for one or more domain users.  The KerberosManager uses a keytab in order to
 present credentials for the Principal under which the Lambda function will be executed.
 You need to initialize the KerberosManager by providing it an input stream that contains
-the contents of a keytab.
+the contents of a keytab.  The keytab should contain the credential associated with the
+_principal_ specified in the `KerberosOptions`.
 
-There are many ways that you can achieve this, but one way is to generate a keytab file
+There are several ways that you can achieve this, but one way is to generate a keytab file
 offline and independent of the Lambda function on a Windows or Linux host and then make
-it available to the Lambda function as an embedded resource or dynamically as an external
-resource, such as from an S3 bucket or even an SSM parameter value.
+it available to the Lambda function as an embedded or content resource.  This is the approach
+shown in the simple example of the `KerberosManager.Init(...)` call above.  While this works,
+it's not the most flexible or secure option.
+
+### Pulling from S3
+
+A better approach would be to _pull_ the keytab file from a secure location that the Lambda
+function can access.  An obvious example would be an S3 bucket which can be secured with
+IAM access controls and server-side encryption.  The IAM Role associated with the Lambda
+would need to grant read access to the target S3 bucket and key path.  This approach is
+demonstrated in the samples included in this repo.
+
+### Pulling from SSM Parameter Store
+
+A similar approach could be used to store the keytab content in an
+[SSM Parameter Value](https://docs.aws.amazon.com/en_pv/systems-manager/latest/userguide/systems-manager-parameter-store.html).  While a keytab is a binary file, the content could
+be Base64-encoded and stored as a _secure string_.  A typical keytab is small enough to
+easily fit in to the maximum size allowed of
+[4 KB or 8 Kb](https://docs.aws.amazon.com/en_pv/general/latest/gr/aws_service_limits.html#limits_ssm).
+
+### Creating a Keytab Offline
 
 To create a keytab file:
 
