@@ -1,7 +1,7 @@
 
 # Zyborg.AWS.Lambda.Kerberos
 
-Implement Kerberos-aware/authenticated AWS Lambda functions in .NET Core.
+Allows AWS Lambda functions in .NET Core to talk to Kerberos-authenticated services.
 
 ---
 
