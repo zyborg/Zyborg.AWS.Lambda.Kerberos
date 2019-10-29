@@ -199,7 +199,9 @@ This repository contains samples that demonstrate three useful and
 common scenarios that take advantage of this package, as described
 here.
 
-### [Sample1](src/Sample1) - Interacting with Microsoft SQL Server w/ Integrated Authentication
+### [Sample1](src/Sample1)
+
+#### Interacting with Microsoft SQL Server w/ Integrated Authentication
 
 One of the most predominant use cases, and the one initially inspiring this solution,
 is having Lambda functions interact with a SQL Server (MSSQL) database using
@@ -211,7 +213,9 @@ This library, together with the latest SQL Client, allows your Lambda function t
 to SQL Server using integrated authentication which can be a requirement in some
 scenarios where mixed-mode authentication is undesirable or disallowed altogether.
 
-### [Sample2](src/Sample2) - Windows Authentication to a Web Site or Web Service
+### [Sample2](src/Sample2)
+
+#### Windows Authentication to a Web Site or Web Service
 
 A common scenario, especially in private networks is to make use of Windows
 Integrated Authentication when talking to various intranet Web Sites or Web Services.
@@ -228,7 +232,9 @@ sites in a simple and straightforward manner.  This sample also includes a compa
 [Web API project](src/Sample2.Server) that can be used either standalone or fronted
 by IIS to demonstrate the Lambda support for Windows Authentication.
 
-### [Sample3](src/Sample3) - Using Native Kerberos-enabled Linux Tooling
+### [Sample3](src/Sample3)
+
+#### Using Native Kerberos-enabled Linux Tooling
 
 There are numerous tools native to the Linux platform that have been _Kerberized_
 and in fact some of these allow interacting with, and managing various resources
@@ -244,3 +250,37 @@ records.  This is a very simple example, but you can see how one could extend
 it to be able to build a system that periodically refreshes records based on
 the state of an AD network, or scavenges records that might represent outdated
 or non-responding resources.
+
+### [Sample4](src/Sample4)
+
+#### Windows Authentication to a gRPC Service
+
+With the recent release of ASP.NET Core 3.0, gRPC has been added as natively
+supported RPC/service call framework.  However, gRPC relies on HTTP/2 and
+Windows Authentication has not been defined for, and is currently unsupported
+atop HTTP/2.
+
+However, with the help of the
+[NegotiatedToken](https://github.com/zyborg/Zyborg.AspNetCore.Authentication.NegotiatedToken)
+_compound authentication scheme_ which blends the individual Negotiate and JWT Bearer
+authentication schemes within the same application, we can achieve effectively the
+same effect, namely Windows Authentication to a gRPC service.
+
+This approach is especially useful for private network scenarios, where gRPC
+is being pitched as a replacement technology for WCF for .NET Core.  WCF has
+been commonly used as a popular remote service call technology on the .NET
+Framework platform in private networks which commonly make use of Active
+Directory to secure service endpoints.
+
+With the lack of support for WCF on .NET Core, gRPC is being promoted as a
+comparable technology.  However, out of the box, it does not offer the native
+Windows Authentication support many have enjoyed with WCF.  But now, with
+the help of NegotiatedToken approach, you can achieve parity on this particular
+feature.
+
+In this example, we show how to do this, and furthermore, with support for
+Lambda functions as service clients with the help of this Lambda Kerberos
+library.  This sample also includes a companion
+[Web API project](src/Sample4.Server) that can be used either standalone
+or fronted by IIS to demonstrate the Lambda support for Windows Authentication
+to a simple gRPC service.
