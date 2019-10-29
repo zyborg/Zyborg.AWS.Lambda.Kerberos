@@ -34,5 +34,5 @@
   "function-memory-size" : 256,
   "function-timeout" : 30,
   "function-handler" : "not_required_for_custom_runtime",  
-  "msbuild-parameters": "--self-contained true /p:AssemblyName=bootstrap"
+  "msbuild-parameters": "--self-contained true" // /p:AssemblyName=bootstrap"
   }

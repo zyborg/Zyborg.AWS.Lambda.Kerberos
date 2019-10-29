@@ -40,7 +40,7 @@ namespace Sample4
             await funcInst.InitKerberos();
             Console.WriteLine("...Kerberos initialized");
 
-            Func<string, ILambdaContext, string> func = funcInst.FunctionHandler;
+            Func<string, ILambdaContext, Task<string>> func = funcInst.FunctionHandler;
             using(var handlerWrapper = HandlerWrapper.GetHandlerWrapper(func, new JsonSerializer()))
             using(var bootstrap = new LambdaBootstrap(handlerWrapper))
             {
@@ -65,11 +65,12 @@ namespace Sample4
         /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        public async Task<string> FunctionHandler(string input, ILambdaContext context)
         {
             _km.Refresh();
 
-            return input?.ToUpper();
+            var reply = await ToUpperByRpc(input);
+            return System.Text.Json.JsonSerializer.Serialize(reply);
         }
 
         public async Task<UpperReply> ToUpperByRpc(string input)
@@ -78,7 +79,8 @@ namespace Sample4
             {
                 // If the API is behind a self-signed cert (for testing and
                 // demonstration purposes) we need to ignore the TLS cert errors
-                ServerCertificateCustomValidationCallback = (msg, crt, chn, err) => true,
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
                 CheckCertificateRevocationList = false,
 
                 // Support any of the relatively recent TLS protos
@@ -102,6 +104,7 @@ namespace Sample4
             // var helloWorld = await client.SayHelloAsync(
             //     new HelloRequest { Name = "World" });
             // Console.WriteLine("HelloWorldMessage: {0}", helloWorld.Message);
+            // return helloWorld.Message;
 
             var upperReply = await client.ToUpperAsync(
                 new UpperRequest { Input = input });

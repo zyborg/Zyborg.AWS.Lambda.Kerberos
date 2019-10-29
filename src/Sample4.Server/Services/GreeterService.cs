@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Sample4.Model;
 
@@ -25,6 +26,7 @@ namespace Sample4.Server
             });
         }
 
+        [Authorize]
         public override Task<UpperReply> ToUpper(UpperRequest request, ServerCallContext context)
         {
             var conn = context.GetHttpContext().Connection;
@@ -41,7 +43,7 @@ namespace Sample4.Server
             return Task.FromResult(new UpperReply
             {
                 YouAre = $"{user?.Identity?.AuthenticationType}:{user?.Identity?.Name}",
-                TimeIs = Timestamp.FromDateTime(DateTime.Now),
+                TimeIs = Timestamp.FromDateTime(DateTime.UtcNow),
                 Result = request.Input?.ToUpper(),
             });
         }

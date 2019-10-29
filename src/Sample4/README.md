@@ -10,7 +10,7 @@
 > on HTTP/2, however the `NegotiatedToken` packages provides a workable alternative by
 > combining the Negotiate authentication scheme with a _surrogate_ JWT Token scheme.
 >
-> A companion project `Sample4.Server` provides a complimentary gRPC sample that this
+> A companion project `Sample4.Server` provides a complimentary gRPC server sample that this
 > project relies on.  You can deploy the server sample as a standalone ASP.NET Core 3.0
 > Kestrel app.
 >

@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!--AWS Lambda executes the bootstrap shell script as the startup process for your function.-->
+    <Content Include="bootstrap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="..\Sample4.Server\Protos\greet.proto" GrpcServices="Client">
       <Link>Protos\greet.proto</Link>
     </Protobuf>
