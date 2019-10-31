@@ -24,6 +24,9 @@ Some examples of where this could be useful include
   using an AD identity instead of SQL credentials
 * **Kerberos-authenticated Services** - interacting with various services hosted on an
   Active Directory domain controller (such as the DNS service in Active Directory).
+* _NEW_ **Kerberos-authenticated gRPC Services** - calling into gRPC service hosted
+  on ASP.NET 3.0, we can _synthesize_ Kerberos-authentication with the help of a
+  third-party library (more details below).
 
 This repository includes samples that demonstrate all three of these scenarios
 as detailed [below](./README.md#samples).
