@@ -34,11 +34,14 @@ jobs:
           Write-Output "Got Version Dump:"
           Write-Output $vdump
 
-          ## Export as output and  ENV VARS for subsequent steps
+          ## Export as output and ENV VARS for subsequent steps
           $versionBase = "$($vdump.Major).$($vdump.Minor).$($vdump.Patch)"
           Write-Host "Found matching Tag Version info:"
           Write-Host "::set-output name=version_base::$versionBase"
-          Write-Host "::set-env name=VERSION_BASE::$versionBase"
+
+          ## set-env is no longer considered safe:
+          ##    https://github.blog/changelog/2020-10-01-github-actions-deprecating-set-env-and-add-path-commands/
+          #Write-Host "::set-env name=VERSION_BASE::$versionBase"
 
       - name: compute build nums
         uses: zyborg/gh-action-buildnum@v1
