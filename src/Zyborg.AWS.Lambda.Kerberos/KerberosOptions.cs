@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace Zyborg.AWS.Lambda.Kerberos
 {
@@ -33,5 +34,16 @@ namespace Zyborg.AWS.Lambda.Kerberos
         /// of:  <c>username@REALM</c>
         /// </summary>
         public string  Principal { get; set; }
+
+        /// <summary>
+        /// Logger used for writing output by KerberosManager.
+        /// </summary>
+        /// <remarks>
+        /// By default a simple consoler logger is used if this value is not
+        /// specified to preserve prior behavior.  You can specify any logger
+        /// of your choosing, even the <see cref="NullLogger" /> to suppress
+        /// any logging.
+        /// </remarks>
+        public ILogger Logger { get; set; }
     }
 }

@@ -4,11 +4,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Zyborg.AWS.Lambda.Kerberos
 {
     public class KerberosManager
     {
+        private static readonly ILogger DefaultConsoleLogger =
+            new ConsoleLogger(typeof(KerberosManager).FullName, (s,l) => true, false);
+
         /// <summary>
         /// This key will be searched for in the current set of process environment
         /// variables to determine if we are running in the context of a Lambda runtime.
@@ -32,6 +37,8 @@ namespace Zyborg.AWS.Lambda.Kerberos
 
         public const string Krb5ConfigEnvKey = "KRB5_CONFIG";
 
+        private ILogger _logger;
+
         private bool _isLinux;
         private string _awsLambdaFuncName;
 
@@ -47,20 +54,27 @@ namespace Zyborg.AWS.Lambda.Kerberos
                 throw new ArgumentNullException(nameof(options));
 
             Options = options;
+            _logger = options.Logger;
+            if (_logger == null)
+            {
+                // Default-ish behavior pre-Logger
+                _logger = DefaultConsoleLogger;
+                _logger.LogWarning("No logger specified, defaulting to simple console logging");
+            }
 
             _isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             _awsLambdaFuncName = Environment.GetEnvironmentVariable(AwsLambdaFuncNameEnvKey);
 
             Enabled = _isLinux && !string.IsNullOrEmpty(_awsLambdaFuncName);
 
-            Console.WriteLine($"Kerberos Manager is [{(Enabled ? "ENABLED" : "DISABLED")}]:");
-            Console.WriteLine("* Is Linux: " + _isLinux);
-            Console.WriteLine("* Lambda Function Name: " + _awsLambdaFuncName);
+            _logger.LogInformation($"Kerberos Manager is [{(Enabled ? "ENABLED" : "DISABLED")}]:");
+            _logger.LogInformation("* Is Linux: " + _isLinux);
+            _logger.LogInformation("* Lambda Function Name: " + _awsLambdaFuncName);
 
             // DEBUG:
             // foreach (var env in Environment.GetEnvironmentVariables().Cast<System.Collections.DictionaryEntry>().OrderBy(e => e.Key))
             // {
-            //     Console.WriteLine($"ENV: [{env.Key}]=[{env.Value}]");
+            //     _logger.LogInformation($"ENV: [{env.Key}]=[{env.Value}]");
             // }
         }
 
@@ -83,10 +97,10 @@ namespace Zyborg.AWS.Lambda.Kerberos
 
             _kinitArgs = $"{Options.Principal} -k";
 
-            Console.WriteLine("Persisting KRB5 configuration");
+            _logger.LogInformation("Persisting KRB5 configuration");
             PrepareKrb5Config();
 
-            Console.WriteLine("Persisting KRB5 keytab");
+            _logger.LogInformation("Persisting KRB5 keytab");
             using (var fs = new FileStream(Krb5KeyTabTarget, FileMode.Create))
             {
                 keytab.CopyTo(fs);
@@ -99,19 +113,19 @@ namespace Zyborg.AWS.Lambda.Kerberos
                 UseShellExecute = false,
             };
     
-            Console.WriteLine($"Initializing Kerberos TGT for principal [{Options.Principal}]");
+            _logger.LogInformation($"Initializing Kerberos TGT for principal [{Options.Principal}]");
             Process.Start(_kinitStartInfo).WaitForExit();
             _lastKinit = DateTime.Now;
-            Console.WriteLine($"...completed at [{_lastKinit}]");
+            _logger.LogInformation($"...completed at [{_lastKinit}]");
         }
 
         void PrepareKrb5Config()
         {
-            Console.WriteLine("Reading in KRB5 configuration template...");
+            _logger.LogInformation("Reading in KRB5 configuration template...");
             var configSource = File.ReadAllText(Krb5ConfigSource);
             var configTarget = TemplateEvaluator.Eval(configSource, this);
             File.WriteAllText(Krb5ConfigTarget, configTarget);
-            Console.WriteLine($"...wrote out KRB5 configuration to [{Krb5ConfigTarget}]");
+            _logger.LogInformation($"...wrote out KRB5 configuration to [{Krb5ConfigTarget}]");
 
             // Export twice, for our benefit, as well as any spawned children
             Environment.SetEnvironmentVariable(Krb5ConfigEnvKey, Krb5ConfigTarget);
@@ -129,10 +143,10 @@ namespace Zyborg.AWS.Lambda.Kerberos
                 {
                     if (force || (DateTime.Now - _lastKinit) > Options.TicketLifetime)
                     {
-                        Console.WriteLine("Kerberos TGT age as expired, regenerating...");
+                        _logger.LogInformation("Kerberos TGT age as expired, regenerating...");
                         Process.Start(_kinitStartInfo).WaitForExit();
                         _lastKinit = DateTime.Now;
-                        Console.WriteLine($"...completed at [{_lastKinit}]");
+                        _logger.LogInformation($"...completed at [{_lastKinit}]");
                     }
                 }
             }
