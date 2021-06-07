@@ -3,6 +3,8 @@
 
 Allows AWS Lambda functions in .NET Core to talk to Kerberos-authenticated services.
 
+:star: I appreciate your star, it helps me decide to which OSS projects I should allocate my spare time.
+
 ---
 
 [![GitHub WorkFlow - CI](https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos/workflows/CI/badge.svg)](https://github.com/zyborg/Zyborg.AWS.Lambda.Kerberos/actions?CI)
