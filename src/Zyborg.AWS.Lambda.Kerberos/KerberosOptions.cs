@@ -27,7 +27,18 @@ namespace Zyborg.AWS.Lambda.Kerberos
         /// realm.  <see cref="https://github.com/Microsoft/vscode-mssql/blob/master/KERBEROS_HELP.md#step-1-find-kerberos-kdc-key-distribution-center-1">
         /// Here</see> is one way to discover this if you are on a Windows machine in the
         /// Kerberos realm/domain.
+        /// You <i>may</i> leave this unspecified if you provide a value for the
+        /// <c>RealmKdcSrvName</c> which will be used to resolve the KDC host at
+        /// initialization.
+        /// </summary>
         public string RealmKdc { get; set; }
+
+        /// <summary>
+        /// Specifies a DNS SRV record name that will be used to resolve the Realm KDC at
+        /// startup.  A typical record would look like
+        /// <c>_kerberos._tcp.dc._msdcs.YOUR_DOMAIN_NAME</c>.
+        /// </summary>
+        public string RealmKdcSrvName { get; set; }
 
         /// <summary>
         /// The fully qualified principal to authenticate as in fully-qualified form

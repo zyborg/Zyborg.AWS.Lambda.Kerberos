@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DnsClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
@@ -97,6 +98,9 @@ namespace Zyborg.AWS.Lambda.Kerberos
 
             _kinitArgs = $"{Options.Principal} -k";
 
+            _logger.LogInformation("Resolving Realm KDC");
+            ResolveKdc();
+
             _logger.LogInformation("Persisting KRB5 configuration");
             PrepareKrb5Config();
 
@@ -117,6 +121,42 @@ namespace Zyborg.AWS.Lambda.Kerberos
             Process.Start(_kinitStartInfo).WaitForExit();
             _lastKinit = DateTime.Now;
             _logger.LogInformation($"...completed at [{_lastKinit}]");
+        }
+
+        void ResolveKdc()
+        {
+            if (string.IsNullOrEmpty(Options.RealmKdc) && !string.IsNullOrEmpty(Options.RealmKdcSrvName))
+            {
+                _logger.LogInformation($"Resolving Realm KDC from DNS SRV record [{Options.RealmKdcSrvName}]");
+                var dns = new LookupClient();
+                var qry = dns.Query(Options.RealmKdcSrvName, QueryType.SRV);
+                if (qry.HasError)
+                {
+                    _logger.LogError("Failed to resolve DNS query: " + qry.ErrorMessage);
+                }
+                else
+                {
+                    var srv = qry.Answers.SrvRecords().FirstOrDefault();
+                    if (srv == null)
+                    {
+                        _logger.LogError("DNS Query returned no SRV results");
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Resolved SRV query as [{srv.Target}]");
+                        Options.RealmKdc = srv.Target;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(Options.RealmKdc))
+            {
+                _logger.LogWarning("Realm KDC is unspecified");
+            }
+            else
+            {
+                _logger.LogInformation($"Realm KDC resolved as [{Options.RealmKdc}]");
+            }
         }
 
         void PrepareKrb5Config()

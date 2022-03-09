@@ -104,12 +104,18 @@ options that can be configured.
 This is the Kerberos realm, typically the domain of an Active Directory environment.
 It should be specified in all capitals.
 
-### `RealmKdc`
-
+### `RealmKdc` and `RealmKdcSrvName`
 
 Identifies a Key Distribution Center (KDC) for the realm which will be used for ticket
 granting requests.  The KDC is a domain controller for your domain.  If you are not sure
-what it is you can discover it by using one of the following methods:
+what it is you can discover it by using one of the methods listed below.
+
+_Alternatively_, instead of specifying this value explicitly, you can optionally specify
+a DNS SRV record name that will resolve one of the KDC names for you.  A typical value
+for the SRV name might look like `_kerberos._tcp.dc._msdcs.YOUR_DOMAIN_NAME` where
+`YOUR_DOMAIN_NAME` would match the `Realm` option described above.
+
+To discover the KDC for your realm you can use one of the following methods:
 
 #### On Windows
 
