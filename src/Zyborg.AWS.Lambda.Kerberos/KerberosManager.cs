@@ -1,19 +1,17 @@
+using DnsClient;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DnsClient;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace Zyborg.AWS.Lambda.Kerberos
 {
     public class KerberosManager
     {
         private static readonly ILogger DefaultConsoleLogger =
-            new ConsoleLogger(typeof(KerberosManager).FullName, (s,l) => true, false);
+            new Logging.SimpleConsoleLogger(typeof(KerberosManager).FullName);
 
         /// <summary>
         /// This key will be searched for in the current set of process environment
@@ -144,7 +142,7 @@ namespace Zyborg.AWS.Lambda.Kerberos
                     else
                     {
                         _logger.LogInformation($"Resolved SRV query as [{srv.Target}]");
-                        Options.RealmKdc = srv.Target;
+                        Options.RealmKdc = srv.Target.Value;
                     }
                 }
             }
